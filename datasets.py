@@ -17,7 +17,6 @@ direction_map = {'N':  0, 'NNE':  1, 'NE':  2, 'ENE':  3,
                  'W': 12, 'NNW': 13, 'NW': 14, 'WNW': 15
                  }
 
-wind_map = {'Calm': 0}
 
 def get_data(data_dir):
     all_data_frames = []
@@ -27,7 +26,8 @@ def get_data(data_dir):
                            header=0,
                            names=data_col_names,
                            skiprows=[0,1,2,3,4],
-                           usecols=[x for x in range(1, 22)])
+                           usecols=[x for x in range(1, 22)],
+                           encoding='cp1252')
         all_data_frames.append(data)
     all_data = pd.concat(all_data_frames, ignore_index=True)
     all_data = clean_data(all_data)
@@ -45,9 +45,16 @@ def clean_data(df):
 
 def get_darwin_airport():
     data_dir = './data/IDCJDW8014/'
-    return get_data(data_dir)    
+    return get_data(data_dir)
 
 
 if __name__ == '__main__':
     data = get_darwin_airport()
     
+    from matplotlib import pyplot as plt
+    plt.plot_date(data['date'], data['rainfall'], '-b', label='rainfall (mm)')
+    plt.plot_date(data['date'], data['min_temp'], '-g', label='min_temp (C)')
+    plt.plot_date(data['date'], data['max_temp'], '-r', label='max_temp (C)')
+    plt.plot_date(data['date'], data['sunshine'], '-y', label='sunshine (Hr)')
+    plt.legend()
+    plt.show()
